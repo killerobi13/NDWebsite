@@ -1,0 +1,18 @@
+﻿
+@page "/Support"
+@inject NavigationManager navManager
+
+
+
+@code {
+
+    protected async override Task OnInitializedAsync()
+    {
+
+        navManager.NavigateTo("/?error=This server does not offer active support. In extreme cases support@newdawn9d.fun can be used to send emails with potential problems.");
+
+
+    }
+
+
+}

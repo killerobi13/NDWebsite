@@ -1,0 +1,78 @@
+﻿@page "/loginControl"
+@using System.Web;
+
+@inject NavigationManager navManager
+
+<AuthorizeView>
+    <Authorized>
+
+        <div class="panel panel-default">
+            <div class="panel-heading"> <b>Logged as, @context.User.Identity.Name</b></div>
+            <div class="panel-body">
+                <div class="control-group" style="margin: auto;  padding:0;width: 50%;">
+
+                    <div class="controls">
+                        <a class="ml-md-auto btn btn-primary"
+                           href="/Login/Logout" style="width:100%"
+                           target="_top">Logout</a>
+                    </div>
+                </div>
+                </div>
+            </div>
+ 
+    </Authorized>
+    <NotAuthorized>
+
+        <form method="post" action="/Login/Login">
+
+
+            <div class="panel panel-default">
+                <div class="panel-heading">Login</div>
+                <div class="panel-body">
+                    <div class="control-group" style="margin-bottom:3px;">
+
+                        <div class="controls">
+                            <input type="text"
+                                   placeholder="Username" name="paramUsername" />
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+
+                        <div class="controls">
+                            <input type="password"
+                                   placeholder="Password" name="paramPassword" />
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+
+                        <div class="controls">
+                            <a href="/resetpassword">Forgot credentials?</a>
+
+                        </div>
+
+                        <div class="controls">
+                            <a href="/resetpassword">Resend confirmation?</a>
+
+                        </div>
+
+                    </div>
+                    <div class="control-group">
+
+                        <div class="controls">
+                            <input class="btn btn-primary" type="submit" value="Login" />
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </form>
+
+    </NotAuthorized>
+</AuthorizeView>
+@code {
+
+}

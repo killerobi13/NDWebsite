@@ -1,0 +1,169 @@
+﻿@page "/Coins"
+@inject NavigationManager NavigationManager
+@inject Models.Paypal PaypalModel
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@using System.Web;
+<AuthorizeView>
+    <Authorized>
+
+
+
+        <div class="col-md-12">
+            <legend>Purchasing Coins</legend>
+            <div class="row">
+                <div class="col-sm-6 col-md-4">
+                    <div class="thumbnail">
+                        <div class="caption">
+                            <p style="        color: gold;
+        padding: 0;
+        text-align: center;
+        margin: 0;
+        font-size: large;
+        font-weight: bolder;
+        text-shadow: 1px 1px 2px black">10 USD (1000 coins)</p>
+                        </div>
+                        <img style="height: 240px; object-fit: cover;" src="css/images/10E.png">
+                        <div class="caption">
+                            <button style="width:100%" @onclick="(()=> Buy(10,1000))">Buy</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-6 col-md-4">
+                    <div class="thumbnail">
+                        <div class="caption">
+                            <p style="        color: gold;
+        padding: 0;
+        text-align: center;
+        margin: 0;
+        font-size:large;
+        font-weight: bolder;
+        text-shadow: 1px 1px 2px black">20 USD (2000+300 coins)</p>
+                        </div>
+                        <img style="height: 240px; object-fit: cover;" src="css/images/10E.png">
+                        <div class="caption">
+                            <button style="width:100%" @onclick="(()=> Buy(20,2300))">Buy</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-6 col-md-4">
+                    <div class="thumbnail">
+                        <div class="caption">
+                            <p style="        color: gold;
+        padding: 0;
+        text-align: center;
+        margin: 0;
+        font-size: large;
+        font-weight: bolder;
+        text-shadow: 1px 1px 2px black">30 USD (3000+500 coins)</p>
+                        </div>
+                        <img style="height: 240px; object-fit: cover;" src="css/images/30E.png">
+                        <div class="caption">
+                            <button style="width:100%" @onclick="(()=> Buy(30,3500))">Buy</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-6 col-md-4">
+                    <div class="thumbnail">
+                        <div class="caption">
+                            <p style="        color: gold;
+        padding: 0;
+        text-align: center;
+        margin: 0;
+        font-size: large;
+        font-weight: bolder;
+        text-shadow: 1px 1px 2px black">50 USD (5000+1000 coins)</p>
+                        </div>
+                        <img style="height: 240px; object-fit: cover;" src="css/images/30E.png">
+                        <div class="caption">
+                            <button style="width:100%" @onclick="(()=> Buy(50,6000))">Buy</button>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="col-sm-6 col-md-4">
+                    <div class="thumbnail">
+                        <div class="caption">
+                            <p style="        color: gold;
+        padding: 0;
+        text-align: center;
+        margin: 0;
+        font-size: large;
+        font-weight: bolder;
+        text-shadow: 1px 1px 2px black">75 USD (7500+1500 coins)</p>
+                        </div>
+                        <img style="height: 240px; object-fit: cover;" src="css/images/50E.png">
+                        <div class="caption">
+                            <button style="width:100%" @onclick="(()=> Buy(75,9000))">Buy</button>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="col-sm-6 col-md-4">
+                    <div class="thumbnail">
+                        <div class="caption">
+                            <p style="        color: gold;
+        padding: 0;
+        text-align: center;
+        margin: 0;
+        font-size: large;
+        font-weight: bolder;
+        text-shadow: 1px 1px 2px black">100 USD (10000+2000 coins)</p>
+                        </div>
+                        <img style="height: 240px; object-fit: cover;" src="css/images/50E.png">
+                        <div class="caption">
+                            <button style="width:100%" @onclick="(()=> Buy(100,12000))">Buy</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+ 
+    </Authorized>
+    <NotAuthorized>
+        <div class="row">
+            <div class="col-md-4 col-md-offset-4">
+                <LoginControl />
+            </div>
+        </div>
+    
+    </NotAuthorized>
+</AuthorizeView>
+
+
+@code{
+
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask { get; set; }
+
+
+    public  async void Buy(int amount, int itemName)
+    {
+        var authState = await authenticationStateTask;
+        var user = authState.User.Identity.Name;
+
+       
+    string redirectUrl = PaypalModel.actionURL + "?" +
+    "cmd=" + PaypalModel.cmd +
+    "&business=" + PaypalModel.business +
+    "&no_shipping=" + PaypalModel.no_shipping +
+    "&@return=" + PaypalModel.@return +
+    "&cancel_return=" + PaypalModel.cancel_return +
+    "&notify_url=" + PaypalModel.notify_url +
+    "&currency_code=" + PaypalModel.currency_code +
+    "&item_name=" + itemName + "coins"+
+    "&item_quantity=1" +
+    "&amount=" + amount +
+    "&custom=" + user;
+        NavigationManager.NavigateTo(redirectUrl);
+    }
+
+}

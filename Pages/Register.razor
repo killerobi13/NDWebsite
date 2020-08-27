@@ -1,0 +1,209 @@
+﻿@page "/register"
+@using System.Text.RegularExpressions
+@using System.Net.Mail
+@using Exceptions
+@inject Helpers.SessionState Session
+@inject IJSRuntime JSRuntime
+@inject Services.UserService UserService
+
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+
+            <fieldset id="reg_form">
+                <div id="legend">
+                    <legend>@Session.language.GetRegistration()</legend>
+                </div>
+                <div class="control-group">
+                    <!-- Username -->
+                    <label class="control-label" for="username"> @Session.language.GetUsername()</label>
+                    <div class="controls">
+                        <input type="text" id="username" name="username" @bind-value="Username" @bind-value:event="onchange" placeholder="">
+                        <p class="help-block" style="color:@UsernameValidationColor">@UsernameValidation</p>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <!-- E-mail -->
+                    <label class="control-label" for="email">@Session.language.GetEmail()</label>
+                    <div class="controls">
+                        <input type="text" id="email" name="email" placeholder="" @bind-value="Email" @bind-value:event="onchange">
+                        <p class="help-block" style="color:@EmailValidationColor">@EmailValidation</p>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <!-- Password-->
+                    <label class="control-label" for="password">@Session.language.GetPassword()</label>
+                    <div class="controls">
+                        <input type="password" id="password" name="password" placeholder="" @bind-value="Password" @bind-value:event="onchange">
+                        <p class="help-block" style="color:@PasswordValidationColor">@PasswordValidation</p>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <!-- Password -->
+                    <label class="control-label" for="password_confirm">@Session.language.GetPasswordConfirm()</label>
+                    <div class="controls">
+                        <input type="password" id="password_confirm" name="password_confirm" placeholder="" @bind-value="PasswordConfirm" @bind-value:event="onchange">
+                        <p class="help-block" style="color:@PasswordConfirmValidationColor">@PasswordConfirmValidation</p>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <!-- Button -->
+                    <div class="controls">
+                        <button class="btn btn-success" style="width:100%" @onclick="RegisterUser">@Session.language.GetRegister()</button>
+                        <p class="help-block" style="color:@FinalValidationColor;text-align:center; padding:5px">@FinalValidation</p>
+
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+    </div>
+@code {
+
+
+    private void RefreshMe()
+    {
+        StateHasChanged();
+    }
+
+    private string FinalValidationColor { get; set; } = RED;
+    private string FinalValidation { get; set; } = "";
+
+    private string Username { get; set; } = "";
+    private string Email { get; set; } = "";
+    private string Password { get; set; } = "";
+    private string PasswordConfirm { get; set; } = "";
+
+
+    private string UsernameValidation { get; set; } = "";
+    private string EmailValidation { get; set; } = "";
+    private string PasswordValidation { get; set; } = "";
+    private string PasswordConfirmValidation { get; set; } = "";
+
+
+    private string EmailValidationColor { get; set; } = RED;
+    private string UsernameValidationColor { get; set; } = RED;
+    private string PasswordValidationColor { get; set; } = RED;
+    private string PasswordConfirmValidationColor { get; set; } = RED;
+
+    private const string GREEN = "green";
+    private const string RED = "red";
+
+
+
+    protected override void OnInitialized()
+    {
+
+        Session.RefreshRequested += RefreshMe;
+    }
+
+    public bool IsValidEmail(string emailaddress)
+    {
+        try
+        {
+            MailAddress m = new MailAddress(emailaddress);
+
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+
+
+    }
+
+
+    private void RegisterUser()
+    {
+        Regex usernameValidation = new Regex(@"^(?=.{8,20}$)[a-zA-Z0-9]+$");
+
+        Regex passwordValidation = new Regex(@"^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,20}$");
+
+
+
+        if (usernameValidation.IsMatch(Username))
+        {
+            UsernameValidation = Session.language.GetValidRegistrationUsername();
+            UsernameValidationColor = GREEN;
+        }
+        else
+        {
+
+            UsernameValidation = Session.language.GetInvalidRegistrationUsername();
+            UsernameValidationColor = RED;
+            return;
+
+        }
+
+        if (passwordValidation.IsMatch(Password))
+        {
+            PasswordValidation = Session.language.GetValidRegistrationPassword();
+            PasswordValidationColor = GREEN;
+        }
+        else
+        {
+            PasswordValidation = Session.language.GetInvalidRegistrationPassword();
+            PasswordValidationColor = RED;
+            return;
+
+        }
+
+        if (Password.Equals(PasswordConfirm))
+        {
+            PasswordConfirmValidation = Session.language.GetValidRegistrationPasswordConfirm();
+            PasswordConfirmValidationColor = GREEN;
+        }
+        else
+        {
+            PasswordConfirmValidation = Session.language.GetInvalidRegistrationPasswordConfirm();
+            PasswordConfirmValidationColor = RED;
+            return;
+
+        }
+
+        if (IsValidEmail(Email))
+        {
+            EmailValidation = Session.language.GetValidRegistrationEmail();
+            EmailValidationColor = GREEN;
+        }
+        else
+        {
+            EmailValidation = Session.language.GetInvalidRegistrationEmail();
+            EmailValidationColor = RED;
+            return;
+
+        }
+
+        if(EmailValidationColor==GREEN && PasswordConfirmValidationColor==GREEN && PasswordValidationColor==GREEN && UsernameValidationColor==GREEN)
+        {
+            EmailValidation = "";
+            PasswordConfirmValidation = "";
+            PasswordValidation = "";
+            UsernameValidation = "";
+
+            try
+            {
+                UserService.RegisterUser(Username, Password, Email);
+                FinalValidation = "User registered successfully. Check your email for a link to confirm your account (check spam as well)";
+                FinalValidationColor = GREEN;
+            }
+            catch (UsernameExistsException ex)
+            {
+                FinalValidation = ex.Message;
+                FinalValidationColor = RED;
+            } catch (EmailExistsException ex)
+            {
+                FinalValidation = ex.Message;
+                FinalValidationColor = RED;
+            } catch
+            {
+                FinalValidation = "Our servers failed you, try again later please.";
+                FinalValidationColor = RED;
+            }
+        }
+    }
+
+    }

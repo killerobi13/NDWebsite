@@ -1,0 +1,113 @@
+﻿@page "/"
+@inject NavigationManager navManager
+@inject NewDawnWeb.Services.NewsService newsService
+@using System.Web
+@using NewDawnWeb.Models
+@inject NewDawnWeb.Services.RankingService rankingService
+<img src="css/images/ND_Logo.png" style="display: block; margin-bottom:10px;
+        width: auto;
+        margin-left: auto;
+        margin-right: auto
+" />
+
+
+<div class="row">
+    @if (Error != null && Error != "")
+    {
+        <div class="col-md-12">
+            <div class="alert alert-danger" role="alert">
+                @Error
+            </div>
+        </div>
+    }
+    <div class="col-md-3">
+
+        <table class="table table-bordered">
+            <thead class="thead-dark">
+                <tr>
+                    <th>No</th>
+                    <th>Name</th>
+                    <th>Level</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i=0;i<rankings.Count();i++)
+                {
+                    <tr>
+                        <td>@(i+1)</td>
+                        <td style="text-align: center;">@rankings[i].Item1</td>
+                        <td style="text-align: center;">@rankings[i].Item2</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+    </div>
+    <div class="col-md-6">
+        <div class="col-md-12">
+            <div class="panel-group">
+                @foreach(var news in this.News)
+                {
+                <div class="panel panel-default" style="cursor:pointer" @onclick="@(e => RedirectToDetails(news.Id))">
+                    <div class="panel-heading">@news.Title</div>
+                    <div class="panel-body">@news.ShortDescription</div>
+                    <div class="panel-footer text-right">@news.Publisher.Username - @news.PublishedDate</div>
+                </div>
+                }
+            </div>
+        </div>
+        <div class="col-md-12 justify-content-center text-center">
+            <div class="btn-group" role="group" aria-label="Basic example">
+                <button type="button" class="btn btn-secondary" @onclick="PrevPage">Previous</button>
+                <button type="button" class="btn btn-secondary" @onclick="NextPage">Next</button>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <LoginControl />
+    </div>
+
+</div>
+
+@code {
+
+    public string Error { get; set; }
+    public IEnumerable<NewDawnWeb.Models.News> News{get;set;}
+    public int currentPage = 0;
+    public int newsCount =0;
+    private List<Tuple<string, int>> rankings;
+    protected override void OnInitialized()
+    {
+        string queryString = navManager.Uri.Substring(navManager.Uri.IndexOf('?') + 1);
+        var parsedString = HttpUtility.HtmlDecode(queryString);
+        Error = HttpUtility.ParseQueryString(parsedString)["error"];
+        News = newsService.GetNewsPage(currentPage);
+        newsCount = newsService.GetNewsPagesCount()/3;
+        rankings = rankingService.GetTop();
+    }
+
+    public void PrevPage(MouseEventArgs e)
+    {
+        if(currentPage>0)
+        {
+            currentPage--;
+            News = newsService.GetNewsPage(3*currentPage);
+        }
+    }
+
+
+    public void NextPage(MouseEventArgs e)
+    {
+        if(currentPage< newsCount)
+        {
+            currentPage++;
+            News = newsService.GetNewsPage(3*currentPage);
+        }
+    }
+
+    public void RedirectToDetails(int id)
+    {
+        navManager.NavigateTo("/News/" + id);
+    }
+
+}

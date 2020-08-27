@@ -1,0 +1,54 @@
+﻿@page "/AccountConfirmation"
+@inject NavigationManager navManager
+@using System.Web
+@inject Services.UserService userService
+
+<div style="        width: 40%;
+        height: 200px;
+        margin: auto;
+        background-color: black;
+        overflow: auto;
+        text-align: center;
+        display: flex;
+        align-items: center;
+        position: absolute;
+        opacity: 0.9;
+        border: 1px solid white;
+        border-radius: 10px;
+        font-size: 1.2em;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;">
+    @Result
+
+</div>
+
+
+@code{
+    private string Result { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        string queryString = navManager.Uri.Substring(navManager.Uri.IndexOf('?') + 1);
+        var parsedString = HttpUtility.HtmlDecode(queryString);
+        var username  = HttpUtility.ParseQueryString(parsedString)["username"];
+        var token = HttpUtility.ParseQueryString(parsedString)["token"];
+        try
+        {
+
+            if(userService.ConfirmUser(username, token))
+                Result = "The account has been confirmed successfully";
+            else
+                Result = "Account confirmation failed.The verification token is not matching. Try again.";
+        }
+        catch
+        {
+            Result = "The account was not confirmed. Request a reconfirmation on the home page";
+
+        }
+
+
+
+    }
+}

@@ -1,0 +1,93 @@
+﻿@page "/ticket"
+@using Blazored.TextEditor
+
+
+<AuthorizeView>
+    <Authorized>
+        <div style="width:80%">
+            <BlazoredTextEditor @ref="@QuillHtml">
+                <ToolbarContent>
+                    <select class="ql-header">
+                        <option selected=""></option>
+                        <option value="1"></option>
+                        <option value="2"></option>
+                        <option value="3"></option>
+                        <option value="4"></option>
+                        <option value="5"></option>
+                    </select>
+                    <span class="ql-formats">
+                        <button class="ql-bold"></button>
+                        <button class="ql-italic"></button>
+                        <button class="ql-underline"></button>
+                        <button class="ql-strike"></button>
+                    </span>
+                    <span class="ql-formats">
+                        <select class="ql-color"></select>
+                        <select class="ql-background"></select>
+                    </span>
+                    <span class="ql-formats">
+                        <button class="ql-list" value="ordered"></button>
+                        <button class="ql-list" value="bullet"></button>
+                    </span>
+                    <span class="ql-formats">
+                        <button class="ql-link"></button>
+                    </span>
+                </ToolbarContent>
+                <EditorContent>
+                    <h4>This Toolbar works with HTML</h4>
+                    <a href="http://BlazorHelpWebsite.com">
+                        BlazorHelpWebsite.com
+                    </a>
+                </EditorContent>
+            </BlazoredTextEditor>
+            <br />
+            <button class="btn btn-primary"
+                    @onclick="GetHTML">
+                Post Ticket
+            </button>
+            <input type="text" bind="@MyInput" />
+
+
+            <button class="btn btn-primary"
+                    @onclick="InsertImage">
+                InsertImage
+            </button>
+            <br />
+            <div>
+                <br />
+                @((MarkupString)QuillHTMLContent)
+                @QuillHTMLContent
+            </div>
+
+
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        You need to be logged, in order to submit a ticket!
+    </NotAuthorized>
+
+
+</AuthorizeView>
+
+
+@code {
+    BlazoredTextEditor QuillHtml;
+    protected string MyInput { get; set; }
+
+    string QuillHTMLContent;
+
+    bool mode = false;
+
+    public async void GetHTML()
+    {
+        QuillHTMLContent = await this.QuillHtml.GetHTML();
+        StateHasChanged();
+    }
+
+
+    public async void InsertImage()
+    {
+        await this.QuillHtml.InsertImage("https://cdn.playbuzz.com/cdn/c9807c41-142b-49e2-8af7-64f459dc1e76/b28bf0de-e687-49e3-86d0-270a1a252a1c.jpg");
+        StateHasChanged();
+    }
+}

@@ -1,0 +1,235 @@
+@import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
+legend.scheduler-border {
+    width: inherit; /* Or auto */
+    padding: 0 10px; /* To give a bit of padding on the left and right */
+    border-bottom: none;
+}
+ 
+
+#blazor-error-ui {
+    background: lightyellow;
+    bottom: 0;
+    box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
+    display: none;
+    left: 0;
+    padding: 0.6rem 1.25rem 0.7rem 1.25rem;
+    position: fixed;
+    width: 100%;
+    z-index: 1000;
+}
+
+#blazor-error-ui .dismiss {
+    cursor: pointer;
+    position: absolute;
+    right: 0.75rem;
+    top: 0.5rem;
+}
+
+input{
+    width:100%;
+}
+
+.panel-default:hover .panel-heading{
+    background-color: indianred;
+
+}
+
+/*.panel-default:hover {
+    cursor: pointer;
+    animation: shake 0.82s cubic-bezier(.36,.07,.19,.97) both;
+    transform: translate3d(0, 0, 0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+}
+
+@keyframes shake {
+    10%, 90% {
+        transform: translate3d(-1px, 0, 0);
+    }
+
+    20%, 80% {
+        transform: translate3d(2px, 0, 0);
+    }
+
+    30%, 50%, 70% {
+        transform: translate3d(-4px, 0, 0);
+    }
+
+    40%, 60% {
+        transform: translate3d(4px, 0, 0);
+    }
+}*/
+
+.categories div {
+
+    text-shadow: 0 2px 2px gold;
+    font-size: 1.6em;
+    cursor: pointer;
+    margin-bottom:2%;
+}
+
+    .categories div:not(:first-child) {
+        padding-left: 1%;
+    }
+
+.categories {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+ 
+
+.im_container {
+    margin-auto;
+    display: flex;
+    flex-wrap: wrap;
+
+}
+
+    .im_container .im_item {
+        flex: 0 0 21%; /* explanation below */
+        margin-left: 3%;
+        margin-top: 1%;
+        height: 100px;
+        background-color: black;
+        position: relative;
+        border: 4px solid grey;
+    }
+
+.im_item .icon {
+    position: absolute;
+    top: 15%;
+    left: 5%;
+    background-color: grey;
+    border: 2px solid gold;
+    width: fit-content;
+}
+
+.im_item .title {
+    position: absolute;
+    top: 5%;
+    left: 30%;
+    color: gold;
+    font-weight: bolder;
+    font-size: 1.1em;
+}
+
+.im_item .price {
+    position: absolute;
+    top: 30%;
+    left: 30%;
+    color: white;
+}
+
+.im_item .preview {
+    color: white;
+    position: fixed;
+    down: 5%;
+    right: 5%;
+}
+
+img 
+{
+    max-width:100%;
+}
+
+
+.im_item .buy {
+    cursor: pointer;
+    color: silver;
+    position: absolute;
+    top: 60%;
+    right: 10%;
+    border-bottom: 1px solid grey;
+}
+
+.im_item .prev {
+    cursor: pointer;
+    color: silver;
+    position: absolute;
+    top: 60%;
+    right: 55%;
+    border-bottom: 1px solid grey;
+}
+
+.im_item .deta {
+    cursor: pointer;
+    color: silver;
+    position: absolute;
+    top: 60%;
+    right: 30%;
+    border-bottom: 1px solid grey;
+}
+
+.deta .details {
+    display: none;
+}
+
+.prev .preview {
+    display: none;
+}
+
+.buy:hover {
+    color: gold;
+    margin: 0;
+}
+
+.prev:hover {
+    color: gold;
+    margin: 0;
+}
+
+.deta:hover {
+    color: gold;
+    margin: 0;
+}
+
+.prev:active .preview {
+    height: fit-content;
+    border-color: 2px solid gold;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+    z-index: 1;
+    display: block;
+    width: fit-content;
+    padding: 0;
+    background-color: black;
+    color: gold;
+    box-shadow: 0 0 0 99999px rgba(0, 0, 0, .5);
+}
+
+.deta:active .details {
+    height: 50%;
+    width:50%;
+    border: 3px solid gold;
+    border-radius:2px 3px;
+    z-index: 1;
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+    background-color: black;
+    color: gold;
+    box-shadow: 0 0 0 99999px rgba(0, 0, 0, .5);
+    padding:2%;
+    overflow:auto;
+}
+
+.noselect {
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+    -khtml-user-select: none; /* Konqueror HTML */
+    -moz-user-select: none; /* Old versions of Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Opera and Firefox */
+}

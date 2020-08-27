@@ -1,0 +1,143 @@
+﻿@page "/Itemmall"
+@inject Services.ItemMallService ItemMallService
+@using System.Web;
+@inject IJSRuntime JSRuntime
+
+
+<AuthorizeView>
+    <Authorized>
+        <h2><b>Coins: @Coins</b></h2>
+
+        <div class="categories">
+            @foreach (var t in Categories.Keys)
+            {
+                <div @onclick="@(e => SelectVa(t))">@Categories[t]</div>
+            }
+        </div>
+
+        <div class="im_container">
+            @foreach (var t in Items)
+            {
+
+                <div class="im_item ">
+                    <div class="icon">
+                        <img src="@t.IconLink">
+                    </div>
+
+                    <div class="title ">
+
+                        @t.Name
+                    </div>
+                    <div class="price ">
+                        @t.Price
+                    </div>
+
+                    <div class="buy noselect" @onclick="@(e => Buy(t.Id,t.Price))"> Buy </div>
+                    <div class="prev noselect">
+                        Preview
+                        <div class="preview">
+                            <img src="@t.HoverLink">
+                        </div>
+
+                    </div>
+                    <div class="deta noselect">
+                        Details
+
+                        <div class="details">
+                            <h2>@t.Name</h2><br />
+                            @((MarkupString)t.Description)
+
+                        </div>
+                    </div>
+
+                </div>
+            }
+        </div>
+
+    </Authorized>
+    <NotAuthorized>
+        <div class="row">
+            <div class="col-md-4 col-md-offset-4">
+               <LoginControl></LoginControl>
+            </div>
+        </div>
+
+    </NotAuthorized>
+</AuthorizeView>
+
+@code{
+    bool _forceRerender;
+    public string Msg { get; set; }
+    private int selectedCategory = 0;
+    private Dictionary<int, string> Categories { get; set; }
+    private List<Models.IMItem> Items { get; set; }
+    private int Coins { get; set; }
+
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask { get; set; }
+
+    protected async override Task OnInitializedAsync()
+    {
+
+        var authState = await authenticationStateTask;
+        var user = authState.User.Identity.Name;
+        Console.WriteLine("hei1");
+        if (user != null)
+        {
+            Console.WriteLine("hei2");
+            Categories = ItemMallService.categoriesMap;
+            Console.WriteLine("hei3");
+            Coins = ItemMallService.GetCoins(user);
+            Items = ItemMallService.GetItemMallItems(selectedCategory);
+ Console.WriteLine("hei4");
+        }
+
+
+    }
+
+    public void SelectVa(int t)
+    {
+        selectedCategory = t;
+        Items = ItemMallService.GetItemMallItems(selectedCategory);
+        _forceRerender = true;
+        StateHasChanged();
+    }
+
+    protected override bool ShouldRender()
+    {
+        if (_forceRerender)
+        {
+            _forceRerender = false;
+            return true;
+        }
+        return base.ShouldRender();
+    }
+
+    public async void Buy(int itemId, int? itemPrice)
+    {
+        bool confirmed = await JSRuntime.InvokeAsync<bool>("confirm", "Are you sure?");
+        if (confirmed)
+        {
+            int price = 0;
+            if (!itemPrice.HasValue) price = 10000;
+            else price = itemPrice.Value;
+            var authState = await authenticationStateTask;
+            var user = authState.User.Identity.Name;
+            if (Coins >= itemPrice)
+            {
+                ItemMallService.BuyItem(user, itemId, price);
+                Msg = "Bought";
+                Coins = Coins - price;
+                _forceRerender = true;
+                StateHasChanged();
+            }
+            else
+            {
+                Msg = "Not enough coins";
+
+                _forceRerender = true;
+                StateHasChanged();
+            }
+        }
+    }
+}

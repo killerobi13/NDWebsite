@@ -1,0 +1,61 @@
+﻿@inject Helpers.SessionState Session
+@using Helpers
+@inject NavigationManager MyNavigationManager
+
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <ul class="nav navbar-nav">
+                <li><a href="#">Home</a></li>
+                <li><a href="/register">Register</a></li>
+                <li><a href="/download">Download</a></li>
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                        Game Info
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li class="disabled"><a href="#">Skills</a></li>
+                        <li class="disabled"><a href="#">Items</a></li>
+                        <li class="disabled"><a href="#">Monsters</a></li>
+                    </ul>
+                </li>
+                <li><a href="/Coins">Donations</a></li>
+                <li><a href="/Itemmall">Item Mall</a></li>
+                <li><a href="/Support">Support</a></li>
+            </ul>
+        </div>
+    </nav>
+
+@code {
+    private bool collapseNavMenu = true;
+
+    private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+
+    private int SelectedLanguage { get; set; }
+
+    protected override void OnInitialized()
+    {
+        SelectedLanguage = Session.language.GetIndex();
+    }
+
+    void ChangeLanguage(ChangeEventArgs e)
+    {
+        Session.CallRequestRefresh();
+        SelectedLanguage = Convert.ToInt32(e.Value.ToString());
+        if (SelectedLanguage == 0)
+        {
+            Session.language = new EnglishStringResource();
+
+        }
+        if (SelectedLanguage == 1)
+        {
+            Session.language = new RomanianStringResource();
+        }
+    }
+}
+
